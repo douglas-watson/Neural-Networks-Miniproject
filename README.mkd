@@ -1,0 +1,10 @@
+SINGLE NEURON MODELLING PROJECT
+-------------------------------
+
+Thibault Dupont and Douglas Watson, 2011
+
+This repository contains the source code for the single neuron modelling project, presented for the course "Neural Networks and Biological Modelling", given by Wulfram Gerstner at EPFL.
+
+## Files
+
+- *source/* contains all source code for the project.
