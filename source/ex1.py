@@ -15,6 +15,8 @@
 import neuron
 import nrn
 
+import matplotlib.pyplot as plt
+
 # The HH_traub and IM_cortex models should be imported automatically.
 
 # Set temperature
@@ -60,7 +62,7 @@ for i in range(40):
 stim = h.IClamp(0.5, sec=HH)
 stim.delay = 0 
 stim.dur =  10 # 10 ms duration # TODO change to step
-stim.amp = 10 # 10 nA 
+stim.amp = 100 # 10 nA 
 
 
 ######################
@@ -68,4 +70,30 @@ stim.amp = 10 # 10 nA
 ######################
 
 h.dt = 0.0025       # integration timestep
+tstop = 5           # end of integration
+v_init = -65        # baseline voltage
 
+# Graphing
+g = h.Graph()
+g.size(0, 5, -80, 40)
+g.addvar('v(0.5)', sec=HH)
+
+ax = plt.axes()
+
+def initialize():
+    h.finitialize(v_init)
+    h.fcurrent()
+
+def integrate():
+    while h.t < tstop:
+        h.fadvance()
+        ax.plot(h.t, HH(0.5).v, 'k.')
+
+def go():
+    initialize()
+    integrate()
+
+
+if __name__ == '__main__':
+    go()
+    plt.show()
