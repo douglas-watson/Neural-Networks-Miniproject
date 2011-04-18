@@ -61,3 +61,11 @@ stim = h.IClamp(0.5, sec=HH)
 stim.delay = 0 
 stim.dur =  10 # 10 ms duration # TODO change to step
 stim.amp = 10 # 10 nA 
+
+
+######################
+# Simulation control
+######################
+
+h.dt = 0.0025       # integration timestep
+

@@ -10,4 +10,4 @@ This repository contains the source code for the single neuron modelling project
 - *source/* contains all source code for the project.
 
 
-Une ligne en bas
+Une ligne en bas. Elle est moche ta ligne.
