@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF8 -*-
 #
-#   Exercice 1 of the NEURON miniproject, for the course "Neural networks and
+#   NEURON miniproject, for the course "Neural networks and
 #   biological modelling" 
+#
+#   This file contains model definitions (neurons) and helper functions (such
+#   as I Clamp tests and visualisation functions)
 #
 #   AUTHOR: Douglas Watson <douglas@watsons.ch>
 #
@@ -24,9 +27,9 @@ import matplotlib.pyplot as plt
 h = neuron.h
 h.celsius = 36
 
-######################
+##############################
 # Model definitions
-######################
+##############################
 
 # Create three models of a soma: HH, HHx, and HHxx, according to instructions
 # given.
@@ -55,14 +58,14 @@ for i in range(40):
     # TODO check units
     syn = h.AlphaSynapse(i/40.0, sec=HH)
     syn.tau = 2 # 2 ms
-    syn.e = -30   # 0 mV reversal potential
+    syn.e = 0   # 0 mV reversal potential
     syn.gmax = 0.005 # uS
 
-######################
+################################
 # Testing and simulation control
-######################
+################################
 
-def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=50, dt=25, tstop=5, 
+def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30, 
         v_init=-70):
     # TODO again, make sure integration units are actually seconds.
     """ 
@@ -78,7 +81,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=50, dt=25, tstop=5,
 
     Arguments for simulation:
     * dt: timestep in ms
-    * tstop: endtime in SECONDS!
+    * tstop: endtime in ms!
     * v_init: initial membrane potential in mV
     """
     # Define stimulate HH in the middle.
@@ -89,7 +92,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=50, dt=25, tstop=5,
 
     # Simulation control
     # TODO make sure units are actually seconds
-    h.dt = dt / 1000.0  # integration timestep: convert to seconds
+    h.dt = dt
     h.finitialize(v_init)
     h.fcurrent()
     
@@ -100,15 +103,24 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=50, dt=25, tstop=5,
         data = np.reshape(np.append(data, [h.t, HH(0.5).v]), (-1, 2))
     return data
 
-if __name__ == '__main__':
-    # Run example simulation
-    # Create a graph
+################################
+# Visualisation
+################################
+
+def U_vs_t(data, linestyle='k-'):
+    """ Returns a U vs t plot for data """
     ax = plt.axes()
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Membrane potential [mV]")
 
-    # Run simulation and plot
-    data = run_IClamp(sec=HH, delay=100, dur=100, amp=50, tstop=30)
     t, v = np.transpose(data)
-    ax.plot(t, v, 'k-')
+    ax.plot(t, v, linestyle)
+    ax.set_ylim(-80, 100)
+
+    return ax
+
+if __name__ == '__main__':
+    # Run simulation and plot
+    data = run_IClamp(sec=HH, delay=0, dur=10, amp=10, tstop=30)
+    ax = U_vs_t(data)
     plt.show()
