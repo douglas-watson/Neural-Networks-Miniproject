@@ -72,17 +72,20 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     Simulate a current clamp measurement on section *sec*. Returns an array of
     (time, voltage) pairs.
 
+    INPUT
+
     Arguments for IClamp:
-    * sec: section (HH, HHx, ...)
-    * pos: position of electrode along section (typically 0.5)
-    * delay: delay before step in ms
-    * dur: duration of step in ms
-    * amp: amplitude of current in nA
+    sec - section (HH, HHx, ...)
+    pos - position of electrode along section (typically 0.5)
+    delay - delay before step in ms
+    dur - duration of step in ms
+    amp - amplitude of current in nA
 
     Arguments for simulation:
-    * dt: timestep in ms
-    * tstop: endtime in ms!
-    * v_init: initial membrane potential in mV
+    dt - timestep in ms
+    tstop - endtime in ms!
+    v_init - initial membrane potential in mV
+
     """
     # Define stimulate HH in the middle.
     stim = h.IClamp(pos, sec=sec)
@@ -104,6 +107,41 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     return data
 
 ################################
+# Helper functions
+################################
+
+def spiketimes(data, v_th=0.5):
+    """Given voltage and time, returns array of spike times
+
+    Note: Code ripped off from one of the python exercise examples.
+
+    INPUT:
+
+    data - 2D array of [time, voltage] pairs
+
+    """
+
+    v, t = np.transpose(data)
+    v_above_th = v>v_th
+    idx = np.nonzero((v_above_th[:-1]==False)&(v_above_th[1:]==True))
+    return t[idx[0]+1]
+
+def spikefreq(data, v_th=0.5):
+    """Given voltage and time, returns spiking frequency
+
+    INPUT:
+
+    data - 2D array of [time, voltage] pairs
+
+    """
+    times = spiketimes(data, v_th=0.5)
+    if len(times) > 1:
+        freq = mean(diff(times))
+    else:
+        freq = 0
+    return freq
+
+################################
 # Visualisation
 ################################
 
@@ -119,8 +157,36 @@ def U_vs_t(data, linestyle='k-'):
 
     return ax
 
+def f_vs_I(data, linestyle='k-'):
+    """ Returns plot of spiking frequency versus stimulation current
+    
+    INPUT
+    
+    data - a list of [I, clampdata] pairs, where clampdata is an array of [t,
+    v] pairs.
+    
+    """
+    ax = plt.axes()
+    ax.set_xlabel("Current [nA]")
+    ax.set_ylabel("Spiking Frequency [kHz]")
+
+    points = [[I, spikefreq(d)] for I, d in data]
+    I, f = np.transpose(points)
+
+    ax.plot(I, f, linestyle)
+
+    return ax
+
 if __name__ == '__main__':
     # Run simulation and plot
     data = run_IClamp(sec=HH, delay=0, dur=10, amp=10, tstop=30)
-    ax = U_vs_t(data)
+    # ax = U_vs_t(data)
+
+    # Type I or II?
+    data = []
+    for I in np.arange(5, 100, 10):
+        clampdata = run_IClamp(sec=HH, delay=0, dur=10, amp=I, tstop=30)
+        data.append([I, clampdata])
+    ax = f_vs_I(data)
+        
     plt.show()
