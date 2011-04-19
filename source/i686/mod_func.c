@@ -8,8 +8,12 @@ modl_reg(){
 
     fprintf(stderr," HH_traub.mod");
     fprintf(stderr," IM_cortex.mod");
+    fprintf(stderr," I_x1.mod");
+    fprintf(stderr," I_x2.mod");
     fprintf(stderr, "\n");
   }
   _HH_traub_reg();
   _IM_cortex_reg();
+  _I_x1_reg();
+  _I_x2_reg();
 }

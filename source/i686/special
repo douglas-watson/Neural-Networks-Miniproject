@@ -10,4 +10,4 @@ if test "" = "yes" ; then
 else
 	NRNIV="${NRNBIN}nrniv"
 fi
-"${NRNIV}" -dll "/home/douglas/Dropbox/epfl/1st-master/neural-networks/miniproject/mod_file_neuron_miniproject/i686/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/home/douglas/Dropbox/epfl/1st-master/neural-networks/miniproject/source/i686/.libs/libnrnmech.so" "$@"

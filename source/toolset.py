@@ -37,29 +37,37 @@ h.celsius = 36
 ### HH
 ######################
 
-HH = nrn.Section()
-# TODO check units of the following definitions.
-HH.L = 67        # set length to 67 um
-HH.diam = 67     # same for diameter
-HH.Ra = 100      # intracellular resistivity
+class DefaultSection(nrn.Section):
 
-# Add passive membrane mechanism
-HH.insert('pas')
-HH(0.5).pas.g = 0.00015 # conductivity
-HH(0.5).pas.e = -70.0   # reversal potential
+    """ Defines the default values for all the somas we will use """
 
-# And H-H model, for a sodium and potassium channel.
-HH.insert('hh2')
-HH.insert('na_ion')
-HH.insert('k_ion')
+    def __init__(self):
+        nrn.Section.__init__(self)
 
-# And 40 alpha synapses equally distributed along the section:
-for i in range(40):
-    # TODO check units
-    syn = h.AlphaSynapse(i/40.0, sec=HH)
-    syn.tau = 2 # 2 ms
-    syn.e = 0   # 0 mV reversal potential
-    syn.gmax = 0.005 # uS
+        self = nrn.Section()
+        self.L = 67        # set length to 67 um
+        self.diam = 67     # same for diameter
+        self.Ra = 100      # intracellular resistivity
+
+        # Add passive membrane mechanism
+        self.insert('pas')
+        self(0.5).pas.g = 0.00015 # conductivity
+        self(0.5).pas.e = -70.0   # reversal potential
+
+        # And H-H model, for a sodium and potassium channel.
+        self.insert('hh2')
+        self.insert('na_ion')
+        self.insert('k_ion')
+
+        # And 40 alpha synapses equally distributed along the section:
+        for i in range(40):
+            # TODO check units
+            syn = h.AlphaSynapse(i/40.0, sec=self)
+            syn.tau = 2 # 2 ms
+            syn.e = 0   # 0 mV reversal potential
+            syn.gmax = 0.005 # uS
+
+HH = DefaultSection()
 
 ################################
 # Testing and simulation control
@@ -180,13 +188,13 @@ def f_vs_I(data, linestyle='k-'):
 if __name__ == '__main__':
     # Run simulation and plot
     data = run_IClamp(sec=HH, delay=0, dur=10, amp=10, tstop=30)
-    # ax = U_vs_t(data)
+    ax = U_vs_t(data)
 
     # Type I or II?
     data = []
     for I in np.arange(5, 100, 10):
         clampdata = run_IClamp(sec=HH, delay=0, dur=10, amp=I, tstop=30)
         data.append([I, clampdata])
-    ax = f_vs_I(data)
+    # ax = f_vs_I(data)
         
     plt.show()
