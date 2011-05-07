@@ -31,18 +31,16 @@ h.celsius = 36
 # Model definitions
 ##############################
 
-# Create three models of a soma: HH, HHx, and HHxx, according to instructions
-# given.
-
-### HH
-######################
+# Define a generic section class, that will be used to initalize the three
+# models HH, HHx, and HHxx, then customised.
 
 class DefaultSection(nrn.Section):
 
     """ Defines the default values for all the somas we will use """
 
-    def __init__(self):
+    def __init__(self, name):
         nrn.Section.__init__(self)
+        self.name = name
 
         self.L = 67        # set length to 67 um
         self.diam = 67     # same for diameter
@@ -66,7 +64,6 @@ class DefaultSection(nrn.Section):
             syn.e = 0   # 0 mV reversal potential
             syn.gmax = 0.005 # uS
 
-HH = DefaultSection()
 
 ################################
 # Testing and simulation control
@@ -110,7 +107,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     data = np.array([])  # array of (time, voltage) points
     while h.t < tstop:
         h.fadvance()
-        data = np.reshape(np.append(data, [h.t, HH(0.5).v]), (-1, 2))
+        data = np.reshape(np.append(data, [h.t, sec(0.5).v]), (-1, 2))
     return data
 
 ################################
@@ -153,7 +150,13 @@ def spikefreq(data, v_th=0.5):
 ################################
 
 def U_vs_t(data, linestyle='k-'):
-    """ Returns a U vs t plot for data """
+    """ Returns a U vs t plot for data 
+    
+    INPUT
+    
+    data - an array of [t, v] pairs
+    linestyle - matlab-style code for the linestyle
+    """
     ax = plt.axes()
     ax.set_xlabel("Time [ms]")
     ax.set_ylabel("Membrane potential [mV]")
@@ -164,13 +167,14 @@ def U_vs_t(data, linestyle='k-'):
 
     return ax
 
-def f_vs_I(data, linestyle='k-'):
+def f_vs_I(data, linestyle='k-', label=""):
     """ Returns plot of spiking frequency versus stimulation current
     
     INPUT
     
     data - a list of [I, clampdata] pairs, where clampdata is an array of [t,
     v] pairs.
+    linestyle - matlab-style code for the linestyle
     
     """
     ax = plt.axes()
@@ -180,18 +184,19 @@ def f_vs_I(data, linestyle='k-'):
     points = [[I, spikefreq(d)] for I, d in data]
     I, f = np.transpose(points)
 
-    ax.plot(I, f, linestyle)
+    ax.plot(I, f, linestyle, label=label)
 
     return ax
 
 if __name__ == '__main__':
+    HH = DefaultSection("HH")
     # Run simulation and plot
     data = run_IClamp(sec=HH, delay=0, dur=20, amp=40, tstop=30)
     # ax = U_vs_t(data)
 
     # Type I or II?
     data = []
-    for I in np.arange(5, 100, 10):
+    for I in np.arange(5, 1000, 10):
         clampdata = run_IClamp(sec=HH, delay=0, dur=10, amp=I, tstop=30)
         data.append([I, clampdata])
     ax = f_vs_I(data, 'k.')
