@@ -44,7 +44,6 @@ class DefaultSection(nrn.Section):
     def __init__(self):
         nrn.Section.__init__(self)
 
-        self = nrn.Section()
         self.L = 67        # set length to 67 um
         self.diam = 67     # same for diameter
         self.Ra = 100      # intracellular resistivity
@@ -54,10 +53,10 @@ class DefaultSection(nrn.Section):
         self(0.5).pas.g = 0.00015 # conductivity
         self(0.5).pas.e = -70.0   # reversal potential
 
-        # And H-H model, for a sodium and potassium channel.
+        # And H-H model, with a sodium and potassium channel.
         self.insert('hh2')
-        self.insert('na_ion')
         self.insert('k_ion')
+        self.insert('na_ion')
 
         # And 40 alpha synapses equally distributed along the section:
         for i in range(40):
@@ -77,10 +76,10 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
         v_init=-70):
     # TODO again, make sure integration units are actually seconds.
     """ 
-    Simulate a current clamp measurement on section *sec*. Returns an array of
-    (time, voltage) pairs.
+    Simulate a current clamp measurement on section *sec*, stimulated by step
+    current. Returns an array of (time, voltage) pairs.
 
-    INPUT
+    INPUT:
 
     Arguments for IClamp:
     sec - section (HH, HHx, ...)
@@ -156,7 +155,7 @@ def spikefreq(data, v_th=0.5):
 def U_vs_t(data, linestyle='k-'):
     """ Returns a U vs t plot for data """
     ax = plt.axes()
-    ax.set_xlabel("Time [s]")
+    ax.set_xlabel("Time [ms]")
     ax.set_ylabel("Membrane potential [mV]")
 
     t, v = np.transpose(data)
@@ -187,14 +186,14 @@ def f_vs_I(data, linestyle='k-'):
 
 if __name__ == '__main__':
     # Run simulation and plot
-    data = run_IClamp(sec=HH, delay=0, dur=10, amp=10, tstop=30)
-    ax = U_vs_t(data)
+    data = run_IClamp(sec=HH, delay=0, dur=20, amp=40, tstop=30)
+    # ax = U_vs_t(data)
 
     # Type I or II?
     data = []
     for I in np.arange(5, 100, 10):
         clampdata = run_IClamp(sec=HH, delay=0, dur=10, amp=I, tstop=30)
         data.append([I, clampdata])
-    # ax = f_vs_I(data)
+    ax = f_vs_I(data, 'k.')
         
     plt.show()
