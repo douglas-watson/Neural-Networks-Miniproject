@@ -45,6 +45,7 @@ class DefaultSection(nrn.Section):
         self.L = 67        # set length to 67 um
         self.diam = 67     # same for diameter
         self.Ra = 100      # intracellular resistivity
+        self.C = 1         # capacity
 
         # Add passive membrane mechanism
         self.insert('pas')
@@ -53,8 +54,8 @@ class DefaultSection(nrn.Section):
 
         # And H-H model, with a sodium and potassium channel.
         self.insert('hh2')
-        self.insert('k_ion')
-        self.insert('na_ion')
+        # self.insert('k_ion')
+        # self.insert('na_ion')
 
         # And 40 alpha synapses equally distributed along the section:
         for i in range(40):
@@ -125,7 +126,7 @@ def spiketimes(data, v_th=0.5):
 
     """
 
-    v, t = np.transpose(data)
+    t, v = np.transpose(data)
     v_above_th = v>v_th
     idx = np.nonzero((v_above_th[:-1]==False)&(v_above_th[1:]==True))
     return t[idx[0]+1]
@@ -138,9 +139,9 @@ def spikefreq(data, v_th=0.5):
     data - 2D array of [time, voltage] pairs
 
     """
-    times = spiketimes(data, v_th=0.5)
+    times = spiketimes(data, v_th=v_th)
     if len(times) > 1:
-        freq = mean(diff(times))
+        freq = 1.0/np.mean(np.diff(times))
     else:
         freq = 0
     return freq
@@ -167,7 +168,7 @@ def U_vs_t(data, linestyle='k-'):
 
     return ax
 
-def f_vs_I(data, linestyle='k-', label=""):
+def f_vs_I(data, linestyle='k-', label="", v_th=-40):
     """ Returns plot of spiking frequency versus stimulation current
     
     INPUT
@@ -181,7 +182,7 @@ def f_vs_I(data, linestyle='k-', label=""):
     ax.set_xlabel("Current [nA]")
     ax.set_ylabel("Spiking Frequency [kHz]")
 
-    points = [[I, spikefreq(d)] for I, d in data]
+    points = [[I, spikefreq(d, v_th=v_th)] for I, d in data]
     I, f = np.transpose(points)
 
     ax.plot(I, f, linestyle, label=label)
