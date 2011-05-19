@@ -15,6 +15,9 @@
 #
 #################################################
 
+import sys
+import os
+
 import neuron
 import nrn
 
@@ -45,7 +48,7 @@ class DefaultSection(nrn.Section):
         self.L = 67        # set length to 67 um
         self.diam = 67     # same for diameter
         self.Ra = 100      # intracellular resistivity
-        self.C = 1         # capacity
+        self.cm = 1         # capacity
 
         # Add passive membrane mechanism
         self.insert('pas')
@@ -58,12 +61,14 @@ class DefaultSection(nrn.Section):
         # self.insert('na_ion')
 
         # And 40 alpha synapses equally distributed along the section:
+        self.synapses = []
         for i in range(40):
             # TODO check units
-            syn = h.AlphaSynapse(i/40.0, sec=self)
+            syn = h.AlphaSynapse(0.5, sec=self)
             syn.tau = 2 # 2 ms
             syn.e = 0   # 0 mV reversal potential
-            syn.gmax = 0.005 # uS
+            syn.gmax = 0.005*0 # uS, initially inactive
+            self.synapses.append(syn)
 
 
 ################################
@@ -71,7 +76,7 @@ class DefaultSection(nrn.Section):
 ################################
 
 def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30, 
-        v_init=-70):
+        v_init=-70, var='v'):
     # TODO again, make sure integration units are actually seconds.
     """ 
     Simulate a current clamp measurement on section *sec*, stimulated by step
@@ -90,6 +95,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     dt - timestep in ms
     tstop - endtime in ms!
     v_init - initial membrane potential in mV
+    var - the variable to log
 
     """
     # Define stimulate HH in the middle.
@@ -108,7 +114,8 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     data = np.array([])  # array of (time, voltage) points
     while h.t < tstop:
         h.fadvance()
-        data = np.reshape(np.append(data, [h.t, sec(0.5).v]), (-1, 2))
+        data = np.reshape(np.append(data, [h.t, getattr(sec(0.5), var)]), 
+                (-1, 2))
     return data
 
 ################################
@@ -188,6 +195,22 @@ def f_vs_I(data, linestyle='k-', label="", v_th=-40):
     ax.plot(I, f, linestyle, label=label)
 
     return ax
+
+def figsave(filename, size=[8.5, 4.5], folder="../figures/"):
+    """
+    Saves the current graph. this is just a shortcut to avoid having to specify
+    the folder and figure size everytime.
+
+    INPUT
+
+    filename - Name of the file. Extension determines filetype
+    size - figsize, as a two-element list
+    folder - folder to save the figures in.
+
+    """
+
+    plt.savefig(os.path.join(folder, filename), figsize=size)
+
 
 if __name__ == '__main__':
     HH = DefaultSection("HH")
