@@ -118,6 +118,24 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
                 (-1, 2))
     return data
 
+def quick_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
+        v_init=-70):
+    """
+    
+    Quick "debug" run of a I clamp. Runs the simulation and displays a graph.
+    Intented for interactive use.
+
+    """
+
+    data = run_IClamp(sec, pos, delay, dur, amp, dt, tstop, v_init)
+    t, v = np.transpose(data)
+
+    ax = plt.axes()
+    ax.plot(t, v, 'k-')
+    ax.set_xlabel("Time [ms]")
+    ax.set_ylabel("Membrane Potential [mV]")
+    plt.show()
+
 ################################
 # Helper functions
 ################################
@@ -152,6 +170,7 @@ def spikefreq(data, v_th=0.5):
     else:
         freq = 0
     return freq
+
 
 ################################
 # Visualisation
@@ -196,7 +215,7 @@ def f_vs_I(data, linestyle='k-', label="", v_th=-40):
 
     return ax
 
-def figsave(filename, size=[8.5, 4.5], folder="../figures/"):
+def figsave(filename, size=[20, 8], folder="../figures/"):
     """
     Saves the current graph. this is just a shortcut to avoid having to specify
     the folder and figure size everytime.
