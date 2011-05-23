@@ -131,6 +131,7 @@ def prob1_4():
     ax.legend()
     figsave("1.4-HHxx_number_of_synapses.pdf")
 
+
 if __name__ == '__main__':
     # skander_examples()
     # prob1_2()

@@ -41,7 +41,7 @@ class DefaultSection(nrn.Section):
 
     """ Defines the default values for all the somas we will use """
 
-    def __init__(self, name):
+    def __init__(self, name, mechanism='hh2'):
         nrn.Section.__init__(self)
         self.name = name
 
@@ -56,12 +56,13 @@ class DefaultSection(nrn.Section):
         self(0.5).pas.e = -70.0   # reversal potential
 
         # And H-H model, with a sodium and potassium channel.
-        self.insert('hh2')
+        self.insert(mechanism)
         self.ek = -100
         self.ena = 50
-        self.vtraub_hh2 = -55
-        self.gnabar_hh2 = 0.05
-        self.gkbar_hh2 = 0.005
+        if mechanism == 'hh2':
+            self.vtraub_hh2 = -55
+            self.gnabar_hh2 = 0.05
+            self.gkbar_hh2 = 0.005
 
         # And 40 alpha synapses equally distributed along the section:
         self.synapses = []
@@ -89,13 +90,16 @@ class DefaultSection(nrn.Section):
         [ (setattr(syn, 'gmax', gmax), setattr(syn, 'onset', onset)) 
                 for syn in self.synapses[:N] ]
 
-class DefaultDendrite(nrn.Section):
+class DefaultDendrite(DefaultSection):
 
     """ 
     Defines the default values for the dendrites we will use.
     
     This class just sets constants. Connections have to be established after
     instantiation. 
+
+    All the methods from DefaultSection are inherited, therefore reset_synapses
+    and activate_synapses also available.
     """
 
     def __init__(self):
@@ -103,6 +107,8 @@ class DefaultDendrite(nrn.Section):
 
         self.Ra = 123       # ohm*cm intracellular resistivity
         self.cm = 2         # uF/cm^2 capacitance
+        self.L = 500        # um length
+        self.diam = 3       # um length
 
         # Passive mechanism
         self.insert('pas')
