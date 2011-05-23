@@ -53,13 +53,22 @@ def skander_examples():
 
 # 1.2 - Type I or II?
 def prob1_2():
-    for model in (HH, HHx, HHxx):
+    for model in (HH, HHxx):
         data = []
-        for I in np.arange(0, 2, 0.1):
+        for I in np.arange(0, 1, 0.025):
             clampdata = run_IClamp(sec=model, delay=0, dur=100, amp=I, 
                     tstop=100)
             data.append([I, clampdata])
         ax = f_vs_I(data, '.', label=model.name, v_th=-40)
+
+    # HHx requires more current
+    data = []
+    for I in np.arange(0, 5, 0.1):
+        clampdata = run_IClamp(sec=HHx, delay=0, dur=100, amp=I, 
+                tstop=100)
+        data.append([I, clampdata])
+    ax = f_vs_I(data, '.', label=HHx.name, v_th=-40)
+
     ax.legend()
     figsave("1.2-neuron_type.pdf")
 
@@ -75,7 +84,7 @@ def prob1_3_run(model):
     ax.set_xlabel("Time [ms]")
     ax.set_ylabel("Membrane voltage [mV]")
     ax.set_title("Effect of opening synapses")
-    for i in range(1, 40):
+    for i in [1, 2, 3, 4, 5, 10, 40]:
         # Reset synapses, then activate just the appropriate number
         [ setattr(syn, 'gmax', 0) for syn in model.synapses ]
         [ setattr(syn, 'onset', 10) for syn in model.synapses ]
@@ -135,5 +144,5 @@ def prob1_4():
 if __name__ == '__main__':
     # skander_examples()
     # prob1_2()
-    # prob1_3()
-    prob1_4()
+    prob1_3()
+    # prob1_4()
