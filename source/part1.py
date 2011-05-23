@@ -26,6 +26,31 @@ HHxx.insert("ixx")
 # ax = U_vs_t(data)
 # plt.show()
 
+# 1 - Run Skander's example stimulations, for comparison
+def skander_examples():
+    data = run_IClamp(HH, delay=50, dur=500, amp=0.5, tstop=600)
+    ax = U_vs_t(data)
+    ax.set_xlim(0, 600)
+    ax.set_ylim(-80, 60)
+    ax.set_title("HH, I=0.5 nA")
+    figsave("1-HH_skander-example.pdf")
+
+    plt.clf()
+    data = run_IClamp(HHx, delay=50, dur=500, amp=4.6, tstop=600)
+    ax = U_vs_t(data)
+    ax.set_xlim(0, 600)
+    ax.set_ylim(-80, 60)
+    ax.set_title("HHx, I = 4.6 nA")
+    figsave("1-HHx_skander-example.pdf")
+
+    plt.clf()
+    data = run_IClamp(HHxx, delay=50, dur=500, amp=0.26, tstop=600)
+    ax = U_vs_t(data)
+    ax.set_xlim(0, 600)
+    ax.set_ylim(-80, 60)
+    ax.set_title("HHxx, I=0.26 nA")
+    figsave("1-HHxx_skander-example.pdf")
+
 # 1.2 - Type I or II?
 def prob1_2():
     for model in (HH, HHx, HHxx):
@@ -70,12 +95,11 @@ def prob1_4():
     ax.set_ylabel("Final voltage [mV]")
     for model in (HH, HHx, HHxx):
         # reset synapses:
-        [ setattr(syn, 'gmax', 0) for syn in model.synapses ]
         final_v = []
         for i in range(len(model.synapses)):
             # activate the synapses
-            model.synapses[i].gmax = 0.005 # uS
-            model.synapses[i].onset = 0
+            model.reset_synapses()
+            model.activate_synapses(N=i)
             # Run current clamp subthreshold
             data = run_IClamp(sec=model, delay=5, dur=150, amp=.1, tstop=50,
                     dt=0.01)
@@ -108,4 +132,7 @@ def prob1_4():
     figsave("1.4-HHxx_number_of_synapses.pdf")
 
 if __name__ == '__main__':
-    prob1_3()
+    # skander_examples()
+    # prob1_2()
+    # prob1_3()
+    prob1_4()

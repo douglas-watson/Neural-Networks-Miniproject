@@ -45,10 +45,10 @@ class DefaultSection(nrn.Section):
         nrn.Section.__init__(self)
         self.name = name
 
-        self.L = 67        # set length to 67 um
+        self.L = 67        # 67 um length
         self.diam = 67     # same for diameter
         self.Ra = 100      # intracellular resistivity
-        self.cm = 1         # capacity
+        self.cm = 1         # capacitance
 
         # Add passive membrane mechanism
         self.insert('pas')
@@ -57,8 +57,11 @@ class DefaultSection(nrn.Section):
 
         # And H-H model, with a sodium and potassium channel.
         self.insert('hh2')
-        # self.insert('k_ion')
-        # self.insert('na_ion')
+        self.ek = -100
+        self.ena = 50
+        self.vtraub_hh2 = -55
+        self.gnabar_hh2 = 0.05
+        self.gkbar_hh2 = 0.005
 
         # And 40 alpha synapses equally distributed along the section:
         self.synapses = []
@@ -70,6 +73,53 @@ class DefaultSection(nrn.Section):
             syn.gmax = 0.005*0 # uS, initially inactive
             self.synapses.append(syn)
 
+    def reset_synapses(self):
+        """ Inactivates all synapses. """
+        [ setattr(syn, 'gmax', 0) for syn in self.synapses ]
+
+    def activate_synapses(self, onset=0, N=-1, gmax=0.005):
+        """ Activates N synapses at time 'onset', setting them to conductance
+        gmax. 
+        
+        INPUT
+        onset - time of activation, in ms
+        N - number of synapses to activate. -1 to activate all
+        gmax - maximum conductance when active
+        """
+        [ (setattr(syn, 'gmax', gmax), setattr(syn, 'onset', onset)) 
+                for syn in self.synapses[:N] ]
+
+class DefaultDendrite(nrn.Section):
+
+    """ 
+    Defines the default values for the dendrites we will use.
+    
+    This class just sets constants. Connections have to be established after
+    instantiation. 
+    """
+
+    def __init__(self):
+        nrn.Section.__init__(self)
+
+        self.Ra = 123       # ohm*cm intracellular resistivity
+        self.cm = 2         # uF/cm^2 capacitance
+
+        # Passive mechanism
+        self.insert('pas')
+        self.nseg = 50
+        self(0.5).pas.g = 0.001   # S/cm^2 conductance
+        self(0.5).pas.e = -70.0   # mV reversal potential 
+
+        self.synapses = []  # no synapses initially.
+
+    def insert_synapses(self, N=40, pos=0):
+        """ Creates N synapses at pos """
+        for i in range(N):
+            syn = h.AlphaSynapse(pos, sec=self)
+            syn.tau = 2 # ms
+            syn.e = 0   # mV reversal potential
+            syn.gmax = 0.001 # uS
+            self.synapses.append(syn)
 
 ################################
 # Testing and simulation control
@@ -176,7 +226,7 @@ def spikefreq(data, v_th=0.5):
 # Visualisation
 ################################
 
-def U_vs_t(data, linestyle='k-'):
+def U_vs_t(data, linestyle='k-', ax=None):
     """ Returns a U vs t plot for data 
     
     INPUT
@@ -184,9 +234,10 @@ def U_vs_t(data, linestyle='k-'):
     data - an array of [t, v] pairs
     linestyle - matlab-style code for the linestyle
     """
-    ax = plt.axes()
-    ax.set_xlabel("Time [ms]")
-    ax.set_ylabel("Membrane potential [mV]")
+    if ax is None: # no axes provided, set up some:
+        ax = plt.axes()
+        ax.set_xlabel("Time [ms]")
+        ax.set_ylabel("Membrane potential [mV]")
 
     t, v = np.transpose(data)
     ax.plot(t, v, linestyle)
@@ -230,6 +281,22 @@ def figsave(filename, size=[20, 8], folder="../figures/"):
 
     plt.savefig(os.path.join(folder, filename), figsize=size)
 
+def newplot(xlabel=None, ylabel=None, title=None):
+    """
+    Returns a new set of labelled axes for plotting.
+
+    INPUT
+    xlabel - x-axis label
+    ylabel - y-axis label
+    title - figure title
+    """
+    fig = plt.figure()
+    ax = plt.axes()
+    if xlabel is not None: ax.set_xlabel(xlabel)
+    if ylabel is not None: ax.set_ylabel(ylabel)
+    if title  is not None: ax.set_title(title)
+
+    return ax
 
 if __name__ == '__main__':
     HH = DefaultSection("HH")
