@@ -1,0 +1,63 @@
+\documentclass[a4paper,oneside]{article}
+
+\usepackage[dvips]{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{multicol}
+\usepackage{mathtools}
+
+\begin{document}
+
+\section{Current}
+$$
+I_{NA} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})
+$$
+
+$$
+I_K = g_K*n(t)^4*(u-E_K)
+$$
+
+$$
+I_{Leak} = g_L*(u-E_L)
+$$
+
+$$
+I_{x/xx} = g_{x/xx}*(u-E_{x/xx})^2
+$$
+
+
+\section{Model}
+
+\subsection{HH}
+
+$$
+C*\frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I(t)
+$$
+
+$$
+C*\frac{du}{dt} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})-g_K*n(t)^4*(u-E_K)-g_L*(u-E_L)+I(t)
+$$
+
+
+\subsection{HHx/xx}
+
+$$
+C*\frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I_{x/xx} + I(t)
+$$
+
+$$
+C*\frac{du}{dt} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})-g_K*n(t)^4*(u-E_K)-g_L*(u-E_L)+g_{x/xx}*(u-E_{x/xx})^2+I(t)
+$$
+
+
+\section{I(t)}
+
+$$
+I(t) = \begin{dcases*}
+        N*I  & when $t_{start} < t < t_{end}$\\
+        0 & otherwise
+        \end{dcases*}
+$$
+
+where $I$ is the amplitude of the stimulation and N the number of synapse.
+
+\end{document}
