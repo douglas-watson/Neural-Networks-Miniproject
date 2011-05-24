@@ -127,12 +127,20 @@ class DefaultDendrite(DefaultSection):
             syn.gmax = 0.001 # uS
             self.synapses.append(syn)
 
+    def insert_inhibitory_synapse(self, pos=0.5, gmax=-0.01):
+        """ Create an inhibitory synapse at position pos """
+        syn = h.AlphaSynapse(pos, sec=self)
+        syn.tau = 5 # ms
+        syn.e = -70 # mV reversal potential
+        syn.gmax = gmax
+        self.inhib_synapse = syn
+
 ################################
 # Testing and simulation control
 ################################
 
 def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30, 
-        v_init=-70, var='v'):
+        v_init=-70, var='v', rec_pos=0.5):
     # TODO again, make sure integration units are actually seconds.
     """ 
     Simulate a current clamp measurement on section *sec*, stimulated by step
@@ -146,6 +154,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     delay - delay before step in ms
     dur - duration of step in ms
     amp - amplitude of current in nA
+    rec_pos - position to record voltage at
 
     Arguments for simulation:
     dt - timestep in ms
@@ -170,7 +179,7 @@ def run_IClamp(sec, pos=0.5, delay=0, dur=100, amp=10, dt=0.025, tstop=30,
     data = np.array([])  # array of (time, voltage) points
     while h.t < tstop:
         h.fadvance()
-        data = np.reshape(np.append(data, [h.t, getattr(sec(0.5), var)]), 
+        data = np.reshape(np.append(data, [h.t, getattr(sec(rec_pos), var)]), 
                 (-1, 2))
     return data
 

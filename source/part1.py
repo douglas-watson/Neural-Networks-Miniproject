@@ -98,51 +98,25 @@ def prob1_3_run(model):
 
 # 1.4 - Number of activated synapses vs EPSP in subthreshold regime
 def prob1_4():
-    ax = plt.axes()
-    ax.clear()
-    ax.set_xlabel("Number of activated synapses")
-    ax.set_ylabel("Final voltage [mV]")
+    ax = newplot("Number of activated synapses", "Max voltage [mV]")
     for model in (HH, HHx, HHxx):
         # reset synapses:
-        final_v = []
+        max_v = []
         for i in range(len(model.synapses)):
             # activate the synapses
             model.reset_synapses()
             model.activate_synapses(N=i)
             # Run current clamp subthreshold
-            data = run_IClamp(sec=model, delay=5, dur=150, amp=.1, tstop=50,
+            data = run_IClamp(sec=model, delay=5, dur=150, amp=.0, tstop=50,
                     dt=0.01)
-            final_v.append([i, data[-1,1]])
-        n, v = np.transpose(final_v)
+            max_v.append([i, data[:,1].max()])
+        n, v = np.transpose(max_v)
         ax.plot(n, v, '.', label=model.name)
     ax.legend()
     figsave("1.4-number_of_synapses.pdf")
 
-    # HHxx is interesting. Let's look deeper:
-    ax = plt.axes()
-    ax.clear()
-    ax.set_xlabel("Number of activated synapses")
-    ax.set_ylabel("Final voltage [mV]")
-    for j in (.1, .15, .20): # different current amplitudes
-        # reset synapses:
-        [ setattr(syn, 'gmax', 0) for syn in HHxx.synapses ]
-        final_v = []
-        for i in range(len(HHxx.synapses)):
-            # activate another synapses
-            HHxx.synapses[i].gmax = 0.005 # uS
-            HHxx.synapses[i].onset = 0
-            # Run current clamp subthreshold
-            data = run_IClamp(sec=HHxx, delay=5, dur=150, amp=j, tstop=50,
-                    dt=0.01)
-            final_v.append([i, data[-1,1]])
-        n, v = np.transpose(final_v)
-        ax.plot(n, v, '.', label="%.2f nA" % j)
-    ax.legend()
-    figsave("1.4-HHxx_number_of_synapses.pdf")
-
-
 if __name__ == '__main__':
     # skander_examples()
     # prob1_2()
-    prob1_3()
-    # prob1_4()
+    # prob1_3()
+    prob1_4()
