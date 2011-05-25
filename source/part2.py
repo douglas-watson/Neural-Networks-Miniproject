@@ -43,7 +43,7 @@ def prob2_2():
 
 def prob2_2_a():
     ax = newplot("Time [ms]", "Membrane voltage [mV]", "Synapses on Dendrite 2")
-    for i in range(1, 40):
+    for i in range(1, 50, 5):
         # Reset synapses, then activate just the appropriate number
         dend2.reset_synapses()
         dend2.activate_synapses(N=i, onset=30)
@@ -52,11 +52,11 @@ def prob2_2_a():
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=plt.cm.jet(i * 1/40.), label=str(i))
     ax.legend()
-    figsave("2.1-%s_synapse_number.pdf" % 'dend2')
+    figsave("2.2-%s_synapse_number.pdf" % 'dend2')
 
 def prob2_2_b():
     ax = newplot("Time [ms]", "Membrane voltage [mV]", "Synapses on Dendrite 3")
-    for i in np.arange(1, 40, 4):
+    for i in np.arange(1, 50, 5):
         # Reset synapses, then activate just the appropriate number
         dend3.reset_synapses()
         dend3.activate_synapses(N=i, onset=30)
@@ -65,7 +65,7 @@ def prob2_2_b():
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=plt.cm.jet(i * 1/40.), label=str(i))
     ax.legend()
-    figsave("2.1-%s_synapse_number.pdf" % 'dend3')
+    figsave("2.2-%s_synapse_number.pdf" % 'dend3')
 
 def prob2_2_c():
     ax = newplot("Time [ms]", "Membrane voltage [mV]", 
@@ -81,7 +81,7 @@ def prob2_2_c():
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=plt.cm.jet(i * 1/40.), label=str(i))
     ax.legend()
-    figsave("2.1-%s_synapse_number.pdf" % 'dend2and3')
+    figsave("2.2-%s_synapse_number.pdf" % 'dend2and3')
 
 def prob2_2_d():
     """ Open 40 synapses, and observe peak propagation """
@@ -104,5 +104,5 @@ def prob2_4():
     # TODO how much gmax to veto a spike?
 
 if __name__ == '__main__':
-    prob2_2_d()
+    prob2_2_b()
     # prob2_4()

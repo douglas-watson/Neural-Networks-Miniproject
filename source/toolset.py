@@ -114,18 +114,18 @@ class DefaultDendrite(DefaultSection):
         # Passive mechanism
         self.insert('pas')
         self.nseg = 50
-        self(0.5).pas.g = 0.001   # S/cm^2 conductance
+        self(0.5).pas.g = 0.0001   # S/cm^2 conductance
         self(0.5).pas.e = -70.0   # mV reversal potential 
 
         self.synapses = []  # no synapses initially.
 
-    def insert_synapses(self, N=40, pos=0):
+    def insert_synapses(self, N=50, pos=0.5):
         """ Creates N synapses at pos """
         for i in range(N):
             syn = h.AlphaSynapse(pos, sec=self)
             syn.tau = 2 # ms
             syn.e = 0   # mV reversal potential
-            syn.gmax = 0.001 # uS
+            syn.gmax = 0.002 # uS
             self.synapses.append(syn)
 
     def insert_inhibitory_synapse(self, pos=0.5, gmax=-0.01):
