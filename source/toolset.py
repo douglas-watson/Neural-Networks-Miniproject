@@ -17,6 +17,7 @@
 
 import sys
 import os
+from copy import copy # copying of arrays
 
 import neuron
 import nrn
@@ -306,12 +307,15 @@ def newplot(xlabel=None, ylabel=None, title=None):
     title - figure title
     """
     fig = plt.figure()
+    fig.subplots_adjust(left=0.11)
     ax = plt.axes()
     if xlabel is not None: ax.set_xlabel(xlabel)
     if ylabel is not None: ax.set_ylabel(ylabel)
     if title  is not None: ax.set_title(title)
 
     return ax
+
+colours = lambda N: [plt.cm.jet(i/float(N)) for i in range(N)]
 
 if __name__ == '__main__':
     HH = DefaultSection("HH")

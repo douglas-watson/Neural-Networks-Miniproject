@@ -74,25 +74,23 @@ def prob1_2():
 
 # 1.3 - How many synapses need to be open for a spike?
 def prob1_3():
-    prob1_3_run(HH)
-    prob1_3_run(HHx)
-    prob1_3_run(HHxx)
+    prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])
+    prob1_3_run(HHx, [1, 10, 20, 23, 24, 25, 30, 40])
+    prob1_3_run(HHxx, [1, 2, 3, 4, 10, 40])
 
-def prob1_3_run(model):
-    ax = plt.axes()
-    ax.clear()
-    ax.set_xlabel("Time [ms]")
-    ax.set_ylabel("Membrane voltage [mV]")
-    ax.set_title("Effect of opening synapses")
-    for i in [1, 2, 3, 4, 5, 10, 40]:
+def prob1_3_run(model, Ns):
+    ax = newplot("Time [ms]", "Membrane voltage [mV]", 
+            "Response to synaptic current")
+    col = colours(len(Ns))
+    for i in Ns:
         # Reset synapses, then activate just the appropriate number
         [ setattr(syn, 'gmax', 0) for syn in model.synapses ]
         [ setattr(syn, 'onset', 10) for syn in model.synapses ]
         [ setattr(syn, 'gmax', 0.005) for syn in model.synapses[:i] ]
-        # no current injection
+        # no current injection, we just want synaptic current
         data = run_IClamp(sec=model, delay=0, dur=20, amp=0, tstop=50, dt=0.01)
         t, v = np.transpose(data)
-        ax.plot(t, v, '-', color=plt.cm.jet(i * 1/30.), label=str(i))
+        ax.plot(t, v, '-', color=col.pop(0), label=str(i))
     ax.legend()
     figsave("1.3-%s_synapse_number.pdf" % model.name)
 
@@ -118,5 +116,5 @@ def prob1_4():
 if __name__ == '__main__':
     # skander_examples()
     # prob1_2()
-    # prob1_3()
-    prob1_4()
+    prob1_3()
+    # prob1_4()
