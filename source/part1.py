@@ -101,6 +101,7 @@ def prob1_3_run(model, Ns):
 # 1.4 - Number of activated synapses vs EPSP in subthreshold regime
 def prob1_4():
     ax = newplot("Number of activated synapses", "Max voltage [mV]")
+    col = colours(4)
     for model in (HH, HHx, HHxx):
         # reset synapses:
         max_v = []
@@ -113,12 +114,12 @@ def prob1_4():
                     dt=0.01)
             max_v.append([i, data[:,1].max()])
         n, v = np.transpose(max_v)
-        ax.plot(n, v, '.', label=model.name)
-    ax.legend()
+        ax.plot(n, v, '.', label=model.name, color=col.pop(0))
+    ax.legend(loc="lower right")
     figsave("1.4-number_of_synapses.pdf")
 
 if __name__ == '__main__':
     # skander_examples()
-    prob1_2()
+    # prob1_2()
     # prob1_3()
-    # prob1_4()
+    prob1_4()
