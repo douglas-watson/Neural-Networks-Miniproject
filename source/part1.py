@@ -53,9 +53,9 @@ def skander_examples():
 
 # 1.2 - Type I or II?
 def prob1_2():
-    fig = plt.figure()
+    fig = plt.figure(figsize=[8,4.5])
     fig.subplots_adjust(left=0.11)
-    col = colours(5)
+    col = colours(4)
 
     for model in (HH, HHxx):
         data = []
@@ -120,6 +120,7 @@ def prob1_4():
 
 if __name__ == '__main__':
     # skander_examples()
-    # prob1_2()
+    prob1_2()
     # prob1_3()
-    prob1_4()
+    # prob1_4()
+    # prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])

@@ -34,6 +34,10 @@ dend3 = DefaultDendrite()
 dend3.connect(dend1, 0, 1)
 dend3.insert_synapses()
 
+dend4 = DefaultDendrite()
+dend4.connect(dend1, 0, 1)
+dend4.insert_synapses(N=1000)
+
 # 2.2 How many synapses for a spike?
 
 def prob2_2():
@@ -56,7 +60,7 @@ def prob2_2_a():
 
 def prob2_2_b():
     ax = newplot("Time [ms]", "Membrane voltage [mV]", "Synapses on Dendrite 3")
-    for i in np.arange(1, 50, 5):
+    for i in np.arange(0, 55, 5):
         # Reset synapses, then activate just the appropriate number
         dend3.reset_synapses()
         dend3.activate_synapses(N=i, onset=30)
@@ -97,6 +101,18 @@ def prob2_2_d():
     ax.legend()
     figsave("2.2-spike_propagation.pdf")
 
+def prob2_2_e():
+    """ Just open 100'000 synapses """
+    ax = newplot("Time [ms]", "Membrane voltage [mV]", "1'000 Synapses")
+    # Reset synapses, then activate just the appropriate number
+    dend4.reset_synapses()
+    dend4.activate_synapses(N=1000, onset=30)
+    # no current injection
+    data = run_IClamp(sec=dend4, pos=0.5, delay=0, dur=20, amp=0, tstop=100, dt=0.01)
+    t, v = np.transpose(data)
+    ax.plot(t, v, '-', color=plt.cm.jet(1/40.))
+    figsave("2.2-1000_synapses_measureDendrite.pdf") 
+
 
 # 2.4 - Inhibitory synapse
 def prob2_4():
@@ -104,5 +120,6 @@ def prob2_4():
     # TODO how much gmax to veto a spike?
 
 if __name__ == '__main__':
-    prob2_2_b()
+    # prob2_2_b()
+    prob2_2_e()
     # prob2_4()
