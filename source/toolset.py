@@ -261,7 +261,7 @@ def U_vs_t(data, linestyle='k-', ax=None):
 
     return ax
 
-def f_vs_I(data, linestyle='k-', label="", v_th=-40):
+def f_vs_I(data, linestyle='-', label="", color="black", v_th=-40):
     """ Returns plot of spiking frequency versus stimulation current
     
     INPUT
@@ -277,8 +277,7 @@ def f_vs_I(data, linestyle='k-', label="", v_th=-40):
 
     points = [[I, spikefreq(d, v_th=v_th)] for I, d in data]
     I, f = np.transpose(points)
-
-    ax.plot(I, f, linestyle, label=label)
+    ax.plot(I, f, linestyle, color=color, label=label)
 
     return ax
 

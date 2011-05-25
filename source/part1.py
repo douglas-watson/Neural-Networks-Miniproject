@@ -53,23 +53,27 @@ def skander_examples():
 
 # 1.2 - Type I or II?
 def prob1_2():
+    fig = plt.figure()
+    fig.subplots_adjust(left=0.11)
+    col = colours(5)
+
     for model in (HH, HHxx):
         data = []
         for I in np.arange(0, 1, 0.025):
             clampdata = run_IClamp(sec=model, delay=0, dur=100, amp=I, 
                     tstop=100)
             data.append([I, clampdata])
-        ax = f_vs_I(data, '.', label=model.name, v_th=-40)
+        ax = f_vs_I(data, '.', label=model.name, v_th=0, color=col.pop(0))
 
     # HHx requires more current
     data = []
-    for I in np.arange(0, 5, 0.1):
+    for I in np.arange(4, 5, 0.02):
         clampdata = run_IClamp(sec=HHx, delay=0, dur=100, amp=I, 
                 tstop=100)
         data.append([I, clampdata])
-    ax = f_vs_I(data, '.', label=HHx.name, v_th=-40)
+    ax = f_vs_I(data, '.', label=HHx.name, v_th=0, color=col.pop(0))
 
-    ax.legend()
+    ax.legend(loc="upper right")
     figsave("1.2-neuron_type.pdf")
 
 # 1.3 - How many synapses need to be open for a spike?
@@ -115,6 +119,6 @@ def prob1_4():
 
 if __name__ == '__main__':
     # skander_examples()
-    # prob1_2()
-    prob1_3()
+    prob1_2()
+    # prob1_3()
     # prob1_4()
