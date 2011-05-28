@@ -237,9 +237,9 @@ def prob2_3_c():
 
     ax = newplot("Time [ms]", "Voltage [mV]", 
             "Inhibitory spike, vary $g_{max}$")
-    col = colours(13)
+    col = colours(5)
 
-    dt = 10
+    dt = -5
     onset = 10
 
     # ax = newplot("Time [ms]", "Voltage [mV]", 
@@ -249,7 +249,7 @@ def prob2_3_c():
 
     # try a few values of gmax, see what works best.
     # col = colours(6)
-    for gmax in np.arange(-0.04, -0.05, -0.001):
+    for gmax in np.arange(-0.055, -0.060, -0.001):
         # reset everything
         dend1.reset_inhibitory_synapse()
         dend2.reset_synapses()
@@ -258,7 +258,7 @@ def prob2_3_c():
         dend3.activate_synapses(onset=10, N=27)
         dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
         data = run_IClamp(sec=soma, pos=0.5, rec_pos=0.5, amp=0, dur=0, 
-                tstop=100)
+                tstop=50)
         t, v = data.transpose()
         ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
     ax.legend()
@@ -270,4 +270,4 @@ if __name__ == '__main__':
     # prob2_1_b([0, 15, 17, 18, 19, 20])
     # prob2_1_c([0, 6, 7, 8, 9, 10, 11])
     # prob2_1_d()
-    prob2_3_b()
+    prob2_3_c()
