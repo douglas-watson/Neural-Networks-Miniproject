@@ -46,8 +46,8 @@ class DefaultSection(nrn.Section):
         nrn.Section.__init__(self)
         self.name = name
 
-        self.L = 18        # 67 um length
-        self.diam = 18     # same for diameter
+        self.L = 18       # 67 um length
+        self.diam = 18    # same for diameter
         self.Ra = 100      # intracellular resistivity
         self.cm = 1         # capacitance
 
@@ -61,7 +61,7 @@ class DefaultSection(nrn.Section):
         """ Inactivates all synapses. """
         [ setattr(syn, 'gmax', 0) for syn in self.synapses ]
 
-    def activate_synapses(self, onset=0, N=-1, gmax=0.005):
+    def activate_synapses(self, onset=0, N=-1, gmax=0.002):
         """ Activates N synapses at time 'onset', setting them to conductance
         gmax. 
         
@@ -98,8 +98,8 @@ class DefaultDendrite(DefaultSection):
         # Passive mechanism
         self.insert('pas')
         self.nseg = 50
-        self(0.5).pas.g = 0.0001   # S/cm^2 conductance
-        self(0.5).pas.e = -70.0   # mV reversal potential 
+        self.g_pas = 0.0001   # S/cm^2 conductance
+        self.e_pas = -70.0   # mV reversal potential 
 
         self.synapses = []  # no synapses initially.
 
@@ -109,7 +109,7 @@ class DefaultDendrite(DefaultSection):
             syn = h.AlphaSynapse(pos, sec=self)
             syn.tau = 2 # ms
             syn.e = 0   # mV reversal potential
-            syn.gmax = 0.002 # uS
+            syn.gmax = 0 # uS
             self.synapses.append(syn)
 
     def insert_inhibitory_synapse(self, pos=0.5, gmax=-0.01):
@@ -198,6 +198,7 @@ def spiketimes(data, v_th=0.5):
     INPUT:
 
     data - 2D array of [time, voltage] pairs
+    v_th - Threshold voltage to count a peak as a spike.
 
     """
 
