@@ -162,7 +162,7 @@ def prob2_2():
     figsave("2.2-Synaptic_summation.pdf")
 
 def prob2_2_b():
-    """ 3D search, for number of neurons activated on each dendrite """
+    """ 2D search, for number of neurons activated on each dendrite """
     max_v = [] # store maximum voltage of each run
     for i in range(0, 60):
         for j in range(0, 30):
@@ -195,31 +195,39 @@ def prob2_3_b():
     
     We know from the previous experiment (prob2_3_a) that the spike takes about
     10 ms to take full effect. Therefore, we must start it approx 10 ms before
-    the expected peak of the EPSP (about 15 ms after synaptic opening). """
+    the expected peak of the EPSP (about 15 ms after synaptic opening). 
+    
+    On second note, this doesn't work, so we'll just do a big search on dt and
+    gmax """
 
-    dt = 5
+    dt = 10
     onset = 10
 
-    ax = newplot("Time [ms]", "Voltage [mV]", 
-            "Veto spike %d ms after synaptic onset" % dt)
-    # reset everything
-    dend2.reset_synapses()
-    dend3.reset_synapses()
-    # activate 1.5 * N_max synapses on dend3  
-    dend3.activate_synapses(onset=10, N=27)
+    # ax = newplot("Time [ms]", "Voltage [mV]", 
+            # "Veto spike %d ms after synaptic onset" % dt)
     # Setup inhibitory synapse
     dend1.insert_inhibitory_synapse()
-    dend1.reset_inhibitory_synapse()
 
     # try a few values of gmax, see what works best.
-    col = colours(6)
-    for gmax in np.arange(-0.01, -0.06, -0.01):
-        dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
-        data = run_IClamp(sec=soma, rec_pos=0.5, amp=0, dur=0, tstop=100)
-        t, v = data.transpose()
-        ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
-    ax.legend()
-    figsave("2.3-veto_spike.pdf")
+    # col = colours(6)
+    max_v = []
+    for dt in range(-3, 15):
+        for gmax in np.arange(-0.01, -0.05, -0.01):
+            print dt, gmax
+            # reset everything
+            dend1.reset_inhibitory_synapse()
+            dend2.reset_synapses()
+            dend3.reset_synapses()
+            # activate 1.5 * N_max synapses on dend3  
+            dend3.activate_synapses(onset=10, N=27)
+            dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
+            data = run_IClamp(sec=soma, rec_pos=0.5, amp=0, dur=0, tstop=100)
+            # t, v = data.transpose()
+            # ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
+            max_v.append([dt, gmax, data[:,1].max()])
+    # ax.legend()
+    # figsave("2.3-veto_spike.pdf")
+    np.savetxt("inhibitory_synapse.dat", max_v)
 
 if __name__ == '__main__':
     # prob2_1_b()
