@@ -212,7 +212,7 @@ def prob2_3_b():
     # col = colours(6)
     max_v = []
     for dt in range(-2, 15):
-        for gmax in np.arange(-0.04, -0.05, -0.001):
+        for gmax in np.arange(-0.01, -0.10, -0.01):
             # reset everything
             dend1.reset_inhibitory_synapse()
             dend2.reset_synapses()
@@ -221,7 +221,7 @@ def prob2_3_b():
             dend3.activate_synapses(onset=10, N=27)
             dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
             data = run_IClamp(sec=soma, pos=0.5, rec_pos=0.5, amp=0, dur=0, 
-                    tstop=100)
+                    tstop=30)
             # t, v = data.transpose()
             # ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
             max_v.append([dt, gmax, data[:,1].max()])
@@ -229,6 +229,40 @@ def prob2_3_b():
     # ax.legend()
     # figsave("2.3-veto_spike.pdf")
     np.savetxt("../data/inhibitory_synapse.dat", max_v)
+
+def prob2_3_c():
+    """ Thwart spike with inhibitory synapse 
+    
+    This func just plot the timeseries again. """
+
+    ax = newplot("Time [ms]", "Voltage [mV]", 
+            "Inhibitory spike, vary $g_{max}$")
+    col = colours(13)
+
+    dt = 10
+    onset = 10
+
+    # ax = newplot("Time [ms]", "Voltage [mV]", 
+            # "Veto spike %d ms after synaptic onset" % dt)
+    # Setup inhibitory synapse
+    dend1.insert_inhibitory_synapse()
+
+    # try a few values of gmax, see what works best.
+    # col = colours(6)
+    for gmax in np.arange(-0.04, -0.05, -0.001):
+        # reset everything
+        dend1.reset_inhibitory_synapse()
+        dend2.reset_synapses()
+        dend3.reset_synapses()
+        # activate 1.5 * N_max synapses on dend3  
+        dend3.activate_synapses(onset=10, N=27)
+        dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
+        data = run_IClamp(sec=soma, pos=0.5, rec_pos=0.5, amp=0, dur=0, 
+                tstop=100)
+        t, v = data.transpose()
+        ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
+    ax.legend()
+    figsave("2.3-veto_spike.pdf")
 
 if __name__ == '__main__':
     # prob2_1_b()
