@@ -15,6 +15,8 @@
 import sys
 from toolset import *
 
+h.celsius = 36
+
 # 1.1 - Define the three different neuron models:
 HH = DefaultSection("HH")
 HHx = DefaultSection("HHx")
@@ -118,9 +120,13 @@ def prob1_4():
     ax.legend(loc="lower right")
     figsave("1.4-number_of_synapses.pdf")
 
+    ax.set_xlim(0, 6)
+    ax.set_ylim(-80, -40)
+    figsave("1.4-number_of_synapses_zoom.pdf")
+
 if __name__ == '__main__':
     # skander_examples()
-    prob1_2()
+    # prob1_2()
     # prob1_3()
-    # prob1_4()
+    prob1_4()
     # prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])

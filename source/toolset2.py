@@ -5,7 +5,9 @@
 #   biological modelling" 
 #
 #   This file contains model definitions (neurons) and helper functions (such
-#   as I Clamp tests and visualisation functions)
+#   as I Clamp tests and visualisation functions) for the second part of the
+#   project. It was separated to avoid strange behaviour linked to constant
+#   definitions.
 #
 #   AUTHOR: Douglas Watson <douglas@watsons.ch>
 #
@@ -27,7 +29,6 @@ import matplotlib.pyplot as plt
 
 # The HH_traub and IM_cortex models should be imported automatically.
 
-# Set temperature
 h = neuron.h
 
 ##############################
@@ -41,42 +42,20 @@ class DefaultSection(nrn.Section):
 
     """ Defines the default values for all the somas we will use """
 
-    def __init__(self, name, mechanism='hh2'):
+    def __init__(self, name, mechanism='hh'):
         nrn.Section.__init__(self)
         self.name = name
 
-        self.L = 67        # 67 um length
-        self.diam = 67     # same for diameter
+        self.L = 18        # 67 um length
+        self.diam = 18     # same for diameter
         self.Ra = 100      # intracellular resistivity
         self.cm = 1         # capacitance
 
-        # Add passive membrane mechanism
-        if mechanism == 'hh2':
-            self.insert('pas')
-            self(0.5).pas.g = 0.00015 # conductivity
-            self(0.5).pas.e = -70.0   # reversal potential
-
-        # And H-H model, with a sodium and potassium channel.
-        self.insert(mechanism)
-        if mechanism == 'hh':
-            self.gl_hh = 0.0001
-            self.gna_hh = 0.2
-        if mechanism == 'hh2':
-            self.ek = -100
-            self.ena = 50
-            self.vtraub_hh2 = -55
-            self.gnabar_hh2 = 0.05
-            self.gkbar_hh2 = 0.005
-
-        # And 40 alpha synapses equally distributed along the section:
-        self.synapses = []
-        for i in range(40):
-            # TODO check units
-            syn = h.AlphaSynapse(0.5, sec=self)
-            syn.tau = 2 # 2 ms
-            syn.e = 0   # 0 mV reversal potential
-            syn.gmax = 0.005*0 # uS, initially inactive
-            self.synapses.append(syn)
+        # And H-H model
+        self.insert('hh')
+        self.gl_hh = 0.0001
+        self.gna_hh = 0.2
+        self.el_hh = -70.0
 
     def reset_synapses(self):
         """ Inactivates all synapses. """
@@ -93,6 +72,8 @@ class DefaultSection(nrn.Section):
         """
         [ (setattr(syn, 'gmax', gmax), setattr(syn, 'onset', onset)) 
                 for syn in self.synapses[:N] ]
+
+
 
 class DefaultDendrite(DefaultSection):
 
