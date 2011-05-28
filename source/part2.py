@@ -20,27 +20,27 @@ from toolset2 import *
 soma = DefaultSection('soma', 'hh')
 
 # Attach a dendrite directly to the soma
-dend1 = DefaultDendrite()
+dend1 = DefaultDendrite("Dend. 1")
 dend1.connect(soma, 0, 1)
 dend1.insert('pas')
 dend1.reset_synapses()
 
 # Attach two dendrites to the first, forming a y, and add synapses at their
 # other extremity
-dend2 = DefaultDendrite()
+dend2 = DefaultDendrite("Dend. 2")
 dend2.connect(dend1, 0, 1)
 dend2.insert_synapses(N=100)
 dend2.insert('ix')
 dend2.gkbar_ix = 2e-5
 dend2.reset_synapses()
 
-dend3 = DefaultDendrite()
+dend3 = DefaultDendrite("Dend. 3")
 dend3.connect(dend1, 0, 1)
 dend3.insert_synapses()
 dend3.insert('ixx')
 dend3.reset_synapses()
 
-# dend4 = DefaultDendrite()
+# dend4 = DefaultDendrite("dend4")
 # dend4.connect(dend1, 0, 1)
 # dend4.insert_synapses(N=1000)
 
@@ -101,15 +101,17 @@ def prob2_1_c(Ns):
 
 def prob2_1_d():
     """ Open 40 synapses, and observe peak propagation """
-    dend2.reset_synapses()
-    dend3.reset_synapses()
-    dend2.activate_synapses(onset=30, N=40)
-    ax = newplot("Time [ms]", "Voltage [mV]")
-
-    for x in [0.2, 0.5, 1]:
-        data = run_IClamp(dend2, pos=0, rec_pos=x, amp=0, dur=100, tstop=100)
+    ax = newplot("Time [ms]", "Voltage [mV]", "Spike propagation along Dend. 1")
+    col = colours(6)
+    for x in [0, 0.5, 1]:
+        dend1.reset_synapses()
+        dend2.reset_synapses()
+        dend3.reset_synapses()
+        dend2.activate_synapses(onset=10, N=55)
+        data = run_IClamp(sec=dend1, pos=0, rec_pos=x, amp=0, dur=100, 
+                tstop=100)
         t, v = data.transpose()
-        ax.plot(t, v, label=str(x))
+        ax.plot(t, v, label=str(x), color=col.pop(2))
     ax.legend()
     figsave("2.1-spike_propagation.pdf")
 
@@ -125,14 +127,104 @@ def prob2_1_e():
     ax.plot(t, v, '-', color=plt.cm.jet(1/40.))
     figsave("2.1-1000_synapses_measureDendrite.pdf") 
 
-# 2.4 - Inhibitory synapse
-def prob2_4():
+def prob2_2():
+    """ Observe synaptic integration """
+    ax = newplot("Number of activated synapses", "Max voltage [mV]")
+    col = colours(4)
+    for dend in (dend2, dend3):
+        dend2.reset_synapses()
+        dend3.reset_synapses()
+        # reset synapses:
+        max_v = []
+        for i in range(len(dend.synapses)):
+            # activate the synapses
+            dend.reset_synapses()
+            dend.activate_synapses(N=i)
+            # Run current clamp subthreshold
+            data = run_IClamp(sec=soma, delay=5, dur=0, amp=0, tstop=50,
+                    dt=0.01)
+            max_v.append([i, data[:,1].max()])
+        n, v = np.transpose(max_v)
+        ax.plot(n, v, '.', label=dend.name, color=col.pop(0))
+    # on both at once
+    for i in range(0, 30):
+        dend2.reset_synapses()
+        dend3.reset_synapses()
+        dend2.activate_synapses(N=i)
+        dend3.activate_synapses(N=i)
+        data = run_IClamp(sec=soma, delay=5, dur=0, amp=0, tstop=50,
+                dt=0.01)
+        max_v.append([i, data[:,1].max()])
+    n, v = np.transpose(max_v)
+    ax.plot(n, v, '.', label="Dend. 2 \& 3", color=col.pop(0))
+
+    ax.legend(loc="lower right")
+    figsave("2.2-Synaptic_summation.pdf")
+
+def prob2_2_b():
+    """ 3D search, for number of neurons activated on each dendrite """
+    max_v = [] # store maximum voltage of each run
+    for i in range(0, 60):
+        for j in range(0, 30):
+            print i, j
+            dend2.reset_synapses()
+            dend3.reset_synapses()
+            dend2.activate_synapses(N=i, onset=0)
+            dend3.activate_synapses(N=j, onset=0)
+            data = run_IClamp(sec=soma, delay=0, dur=0, amp=0, tstop=25,
+                    dt=0.01)
+            max_v.append([i, j, data[:,1].max()])
+    np.savetxt('synaptic_summation.dat', max_v)
+
+# 2.3 - Inhibitory synapse
+def prob2_3_a():
+    """ Open inhibitory synapse, to observe its dynamics """
+    ax = newplot("Time [ms]", "Voltage [mV]", "Inhibitory spike")
     dend1.insert_inhibitory_synapse()
-    # TODO how much gmax to veto a spike?
+    dend2.reset_synapses()
+    dend3.reset_synapses()
+    dend1.reset_inhibitory_synapse()
+    dend1.activate_inhibitory_synapse(gmax=-0.05)
+    data = run_IClamp(sec=dend1, rec_pos=0.5, amp=0, dur=0, tstop=100)
+    t, v = data.transpose()
+    ax.plot(t, v, '-')
+    figsave("2.3-inhibitory_spike_alone.pdf")
+
+def prob2_3_b():
+    """ Thwart spike with inhibitory synapse 
+    
+    We know from the previous experiment (prob2_3_a) that the spike takes about
+    10 ms to take full effect. Therefore, we must start it approx 10 ms before
+    the expected peak of the EPSP (about 15 ms after synaptic opening). """
+
+    dt = 5
+    onset = 10
+
+    ax = newplot("Time [ms]", "Voltage [mV]", 
+            "Veto spike %d ms after synaptic onset" % dt)
+    # reset everything
+    dend2.reset_synapses()
+    dend3.reset_synapses()
+    # activate 1.5 * N_max synapses on dend3  
+    dend3.activate_synapses(onset=10, N=27)
+    # Setup inhibitory synapse
+    dend1.insert_inhibitory_synapse()
+    dend1.reset_inhibitory_synapse()
+
+    # try a few values of gmax, see what works best.
+    col = colours(6)
+    for gmax in np.arange(-0.01, -0.06, -0.01):
+        dend1.activate_inhibitory_synapse(gmax=gmax, onset=10+dt)
+        data = run_IClamp(sec=soma, rec_pos=0.5, amp=0, dur=0, tstop=100)
+        t, v = data.transpose()
+        ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
+    ax.legend()
+    figsave("2.3-veto_spike.pdf")
 
 if __name__ == '__main__':
     # prob2_1_b()
     # prob2_1_a([0, 47, 50, 51, 53, 55])
     # prob2_1_b([0, 15, 17, 18, 19, 20])
-    prob2_1_c([0, 6, 7, 8, 9, 10, 11])
-    # prob2_4()
+    # prob2_1_c([0, 6, 7, 8, 9, 10, 11])
+    # prob2_1_d()
+    prob2_3_b()

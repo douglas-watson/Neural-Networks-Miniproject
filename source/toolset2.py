@@ -87,8 +87,9 @@ class DefaultDendrite(DefaultSection):
     and activate_synapses also available.
     """
 
-    def __init__(self):
+    def __init__(self, name):
         nrn.Section.__init__(self)
+        self.name = name
 
         self.Ra = 123       # ohm*cm intracellular resistivity
         self.cm = 2         # uF/cm^2 capacitance
@@ -112,13 +113,20 @@ class DefaultDendrite(DefaultSection):
             syn.gmax = 0 # uS
             self.synapses.append(syn)
 
-    def insert_inhibitory_synapse(self, pos=0.5, gmax=-0.01):
+    def insert_inhibitory_synapse(self, pos=0.5):
         """ Create an inhibitory synapse at position pos """
         syn = h.AlphaSynapse(pos, sec=self)
         syn.tau = 5 # ms
         syn.e = -70 # mV reversal potential
-        syn.gmax = gmax
+        syn.gmax = 0
         self.inhib_synapse = syn
+
+    def activate_inhibitory_synapse(self, onset=10, gmax=-0.01):
+        self.inhib_synapse.onset = onset
+        self.inhib_synapse.gmax = gmax
+
+    def reset_inhibitory_synapse(self):
+        self.inhib_synapse.gmax = 0
 
 ################################
 # Testing and simulation control
