@@ -174,7 +174,7 @@ def prob2_2_b():
             data = run_IClamp(sec=soma, delay=0, dur=0, amp=0, tstop=25,
                     dt=0.01)
             max_v.append([i, j, data[:,1].max()])
-    np.savetxt('synaptic_summation.dat', max_v)
+    np.savetxt('../data/synaptic_summation.dat', max_v)
 
 # 2.3 - Inhibitory synapse
 def prob2_3_a():
@@ -212,8 +212,7 @@ def prob2_3_b():
     # col = colours(6)
     max_v = []
     for dt in range(-3, 15):
-        for gmax in np.arange(-0.01, -0.05, -0.01):
-            print dt, gmax
+        for gmax in np.arange(-0.01, -0.1, -0.01):
             # reset everything
             dend1.reset_inhibitory_synapse()
             dend2.reset_synapses()
@@ -225,9 +224,10 @@ def prob2_3_b():
             # t, v = data.transpose()
             # ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
             max_v.append([dt, gmax, data[:,1].max()])
+            print max_v[-1]
     # ax.legend()
     # figsave("2.3-veto_spike.pdf")
-    np.savetxt("inhibitory_synapse.dat", max_v)
+    np.savetxt("../data/inhibitory_synapse.dat", max_v)
 
 if __name__ == '__main__':
     # prob2_1_b()
