@@ -3,61 +3,65 @@
 \usepackage[dvips]{graphicx}
 \usepackage[latin1]{inputenc}
 \usepackage{multicol}
-\usepackage{mathtools}
+\usepackage{amssymb,amsmath}
 
 \begin{document}
 
 \section{Current}
 $$
-I_{NA} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})
+I_{NA} = g_{NA}*m(u)^3*h(u)*(u-E_{NA})
 $$
 
 $$
-I_K = g_K*n(t)^4*(u-E_K)
+I_K = g_K \cdot n(u)^4*(u-E_K)
 $$
 
 $$
-I_{Leak} = g_L*(u-E_L)
+I_{Leak} = g_L \cdot (u-E_L)
 $$
 
 $$
-I_{x/xx} = g_{x/xx}*(u-E_{x/xx})^2
+I_{x/xx} = g_{x/xx} \cdot (u-E_{x/xx})^2
 $$
 
 
 \section{Model}
 
+
+
 \subsection{HH}
 
 $$
-C*\frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I(t)
+C \cdot \frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I(t)
 $$
 
 $$
-C*\frac{du}{dt} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})-g_K*n(t)^4*(u-E_K)-g_L*(u-E_L)+I(t)
+C \cdot \frac{du}{dt} = -g_{NA} \cdot m(u)^3 \cdot h(u) \cdot (u-E_{NA})-g_K \cdot n(u)^4 \cdot (u-E_K)-g_L \cdot (u-E_L)+I(t)
 $$
 
 
 \subsection{HHx/xx}
 
 $$
-C*\frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I_{x/xx} + I(t)
+C \cdot \frac{du}{dt} = I_{NA} - I_K - I_{Leak} + I_{x/xx} + I(t)
 $$
 
 $$
-C*\frac{du}{dt} = -g_{NA}*m(t)^3*h(t)*(u-E_{NA})-g_K*n(t)^4*(u-E_K)-g_L*(u-E_L)+g_{x/xx}*(u-E_{x/xx})^2+I(t)
+C \cdot \frac{du}{dt} = -g_{NA} \cdot m(u)^3 \cdot h(u) \cdot (u-E_{NA})-g_K \cdot n(u)^4 \cdot (u-E_K)-g_L \cdot (u-E_L) - g_{x/xx} \cdot (u-E_{x/xx})^2+I(t)
 $$
 
 
-\section{I(t)}
+
+
+
+
+\section{g}
 
 $$
-I(t) = \begin{dcases*}
-        N*I  & when $t_{start} < t < t_{end}$\\
-        0 & otherwise
-        \end{dcases*}
+g^{total}_{channel} = N \cdot g_{channel} \text{\hspace*{1cm} with N = number of active synapses}
 $$
 
-where $I$ is the amplitude of the stimulation and N the number of synapse.
+
+
 
 \end{document}
