@@ -7,7 +7,8 @@
 #   This file contains model definitions (neurons) and helper functions (such
 #   as I Clamp tests and visualisation functions)
 #
-#   AUTHOR: Douglas Watson <douglas@watsons.ch>
+#   AUTHOR: Thibault Dupont <thibault.dupont@epfl.ch>
+#           Douglas Watson <douglas@watsons.ch>
 #
 #   DATE: started on 14th April 2011
 #

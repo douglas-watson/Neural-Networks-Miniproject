@@ -9,7 +9,8 @@
 #   project. It was separated to avoid strange behaviour linked to constant
 #   definitions.
 #
-#   AUTHOR: Douglas Watson <douglas@watsons.ch>
+#   AUTHOR: Thibault Dupont <thibault.dupont@epfl.ch>
+#           Douglas Watson <douglas@watsons.ch>
 #
 #   DATE: started on 14th April 2011
 #
