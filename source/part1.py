@@ -126,7 +126,7 @@ def prob1_4():
 if __name__ == '__main__':
     # skander_examples()
     prob1_2()
+    prob1_3()
     #prob1_3()
-    #prob1_3()
-    #prob1_4()
+    prob1_4()
     # prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])

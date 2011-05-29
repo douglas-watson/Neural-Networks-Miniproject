@@ -54,6 +54,8 @@ def prob2_1():
 def prob2_1_a(Ns):
     ax = newplot("Time [ms]", "Membrane voltage [mV]", "Synapses on Dendrite 2")
     col = colours(len(Ns))
+    dend2.reset_synapses()
+    dend3.reset_synapses()
     for i in Ns:
         # Reset synapses, then activate just the appropriate number
         dend2.reset_synapses()
@@ -63,12 +65,14 @@ def prob2_1_a(Ns):
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=col.pop(0), label=str(i))
     ax.legend()
-    ax.set_ylim(0, 80)
-    figsave("2.1-%s_synapse_number.pdf" % 'dend2')
+    ax.set_ylim(-80, 40)
+    figsave("2_1-%s_synapse_number.pdf" % 'dend2')
 
 def prob2_1_b(Ns):
     ax = newplot("Time [ms]", "Membrane voltage [mV]", "Synapses on Dendrite 3")
     col = colours(len(Ns))
+    dend2.reset_synapses()
+    dend3.reset_synapses()
     for i in Ns:
         # Reset synapses, then activate just the appropriate number
         dend3.reset_synapses()
@@ -79,8 +83,8 @@ def prob2_1_b(Ns):
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=col.pop(0), label=str(i))
     ax.legend()
-    ax.set_ylim(0, 80)
-    figsave("2.1-%s_synapse_number.pdf" % 'dend3')
+    ax.set_ylim(-80, 40)
+    figsave("2_1-%s_synapse_number.pdf" % 'dend3')
 
 def prob2_1_c(Ns):
     ax = newplot("Time [ms]", "Membrane voltage [mV]", 
@@ -97,7 +101,7 @@ def prob2_1_c(Ns):
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=col.pop(0), label=str(i))
     ax.legend()
-    figsave("2.1-%s_synapse_number.pdf" % 'dend2and3')
+    figsave("2_1-%s_synapse_number.pdf" % 'dend2and3')
 
 def prob2_1_d():
     """ Open 40 synapses, and observe peak propagation """
@@ -113,7 +117,7 @@ def prob2_1_d():
         t, v = data.transpose()
         ax.plot(t, v, label=str(x), color=col.pop(2))
     ax.legend()
-    figsave("2.1-spike_propagation.pdf")
+    figsave("2_1-spike_propagation.pdf")
 
 def prob2_1_e():
     """ Just open 100'000 synapses """
@@ -125,7 +129,7 @@ def prob2_1_e():
     data = run_IClamp(sec=dend4, pos=0.5, delay=0, dur=20, amp=0, tstop=100, dt=0.01)
     t, v = np.transpose(data)
     ax.plot(t, v, '-', color=plt.cm.jet(1/40.))
-    figsave("2.1-1000_synapses_measureDendrite.pdf") 
+    figsave("2_1-1000_synapses_measureDendrite.pdf") 
 
 def prob2_2():
     """ Observe synaptic integration """
@@ -159,7 +163,7 @@ def prob2_2():
     ax.plot(n, v, '.', label="Dend. 2 \& 3", color=col.pop(0))
 
     ax.legend(loc="lower right")
-    figsave("2.2-Synaptic_summation.pdf")
+    figsave("2_2-Synaptic_summation.pdf")
 
 def prob2_2_b():
     """ 2D search, for number of neurons activated on each dendrite """
@@ -188,7 +192,7 @@ def prob2_3_a():
     data = run_IClamp(sec=dend1, rec_pos=0.5, amp=0, dur=0, tstop=100)
     t, v = data.transpose()
     ax.plot(t, v, '-')
-    figsave("2.3-inhibitory_spike_alone.pdf")
+    figsave("2_3-inhibitory_spike_alone.pdf")
 
 def prob2_3_b():
     """ Thwart spike with inhibitory synapse 
@@ -227,7 +231,7 @@ def prob2_3_b():
             max_v.append([dt, gmax, data[:,1].max()])
             print max_v[-1]
     # ax.legend()
-    # figsave("2.3-veto_spike.pdf")
+    # figsave("2_3-veto_spike.pdf")
     np.savetxt("../data/inhibitory_synapse.dat", max_v)
 
 def prob2_3_c():
@@ -262,12 +266,13 @@ def prob2_3_c():
         t, v = data.transpose()
         ax.plot(t, v, '-', color=col.pop(0), label=str(gmax))
     ax.legend()
-    figsave("2.3-veto_spike.pdf")
+    figsave("2_3-veto_spike.pdf")
 
 if __name__ == '__main__':
     # prob2_1_b()
     # prob2_1_a([0, 47, 50, 51, 53, 55])
-    # prob2_1_b([0, 15, 17, 18, 19, 20])
+    prob2_1_b([0, 15, 17, 18, 19, 20])
     # prob2_1_c([0, 6, 7, 8, 9, 10, 11])
+    # prob2_2()
     # prob2_1_d()
-    prob2_3_c()
+    # prob2_3_c()
