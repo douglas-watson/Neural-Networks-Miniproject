@@ -90,9 +90,8 @@ def prob1_3_run(model, Ns):
     col = colours(len(Ns))
     for i in Ns:
         # Reset synapses, then activate just the appropriate number
-        [ setattr(syn, 'gmax', 0) for syn in model.synapses ]
-        [ setattr(syn, 'onset', 10) for syn in model.synapses ]
-        [ setattr(syn, 'gmax', 0.005) for syn in model.synapses[:i] ]
+        model.reset_synapses()
+        model.activate_synapses(N=i, onset=10)
         # no current injection, we just want synaptic current
         data = run_IClamp(sec=model, delay=0, dur=20, amp=0, tstop=50, dt=0.01)
         t, v = np.transpose(data)
@@ -103,14 +102,14 @@ def prob1_3_run(model, Ns):
 # 1.4 - Number of activated synapses vs EPSP in subthreshold regime
 def prob1_4():
     ax = newplot("Number of activated synapses", "Max voltage [mV]")
-    col = colours(4)
+    col = colours(5)
     for model in (HH, HHx, HHxx):
         # reset synapses:
         max_v = []
         for i in range(len(model.synapses)):
             # activate the synapses
             model.reset_synapses()
-            model.activate_synapses(N=i)
+            model.activate_synapses(N=i, onset=10)
             # Run current clamp subthreshold
             data = run_IClamp(sec=model, delay=5, dur=150, amp=.0, tstop=50,
                     dt=0.01)
@@ -127,6 +126,7 @@ def prob1_4():
 if __name__ == '__main__':
     # skander_examples()
     # prob1_2()
+    # prob1_3()
     # prob1_3()
     prob1_4()
     # prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])
