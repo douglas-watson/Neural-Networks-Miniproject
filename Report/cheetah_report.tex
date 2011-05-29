@@ -1,0 +1,111 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+% \documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out
+                                                          % if you need a4paper
+\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4
+                                                          % paper
+
+\IEEEoverridecommandlockouts                              % This command is only
+                                                          % needed if you want to
+                                                          % use the \thanks command
+\overrideIEEEmargins
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+
+
+\usepackage[pdftex]{graphicx} % modern graphics package
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{units}      % pretty units : \unit[val]{dim}
+\usepackage{url}        % pretty urls
+\usepackage{multirow}   % multiple rows in tables
+
+% Header and footer definitions
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\pagestyle{fancyplain}
+\fancyhf{}
+\rfoot{\fancyplain{}{\thepage}}
+\lfoot{\fancyplain{}{\today}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot[\today]{\thepage}
+\lfoot[\thepage]{\today}
+\cfoot[]{}
+
+
+\graphicspath{{.}{./singlets/}{./search/}{./analysis/}{./CPG/}{./OpenQuestion/}}
+
+\DeclareMathOperator{\sign}{sign}
+
+\title{\LARGE \bf
+Locomotion in a feline-inspired quadruped robot
+}
+
+\author{Fabian Santi and Douglas Watson, group 3% <-this % stops a space
+\thanks{This work is presented for the course ``Biological Models of 
+Sensory-Motor Systems'' given by A. J. Ijspeert in the autumn semester of 2010, 
+at Ecole Polytechnique Fédérale de Lausanne.  F. Santi is enrolled in the Life 
+Sciences program, and D. Watson in the Materials program.}%
+}
+
+
+\begin{document}
+
+\newcommand{\order}[1]{$\cdot 10^{#1}$}
+\newcommand{\pvalue}[2]{p-value $< #1 \cdot 10^{#2}$}
+
+\maketitle
+\thispagestyle{fancyplain}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+The goal of this project was to determine what makes a good trot gait through 
+computer simulations of a quadruped robot. The problem was first approached 
+using a sine-based controller, by searching for optimal controller parameters 
+and studying their effect on the performance of the gait. Performance was 
+measured by average speed, stability (average amplitude of oscillations), and 
+balance. For this purpose, systematic searches were performed around an initial 
+(given) gait. The sine-based controller was then replaced by a central pattern 
+generator (CPG), which replicates to some extent the central motor control of 
+quadruped animals. The CPG was first studied mathematically, then implemented 
+on the simulator. It was then used to study feedback and gait transitions.
+
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\input{singlets/intro.tex}
+
+\input{search/search.tex}
+\input{analysis/analysis.tex}
+\clearpage
+\input{CPG/cpg.tex}
+\clearpage
+\input{OpenQuestion/openquestion.tex}
+\input{singlets/conclusion.tex}
+
+\section*{Supplementary material}
+\label{sec:supplementary-material}
+
+Supporting videos are available in the bundled archive. Source code and raw 
+data, as well as \textsl{R} scripts to interpret the data, are available on 
+github: \url{git://github.com/douglas-watson/cheetah-project.git}
+
+\nocite{*}
+\bibliographystyle{ieeetr}
+\bibliography{cheetah}
+
+\end{document}
