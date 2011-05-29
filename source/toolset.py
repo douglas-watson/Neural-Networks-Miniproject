@@ -308,12 +308,12 @@ def newplot(xlabel=None, ylabel=None, title=None):
     ylabel - y-axis label
     title - figure title
     """
-    fig = plt.figure(figsize=[8, 4.5])
-    fig.subplots_adjust(left=0.11)
+    fig = plt.figure(figsize=[5.3, 3])
+    fig.subplots_adjust(left=0.15, bottom=0.15)
     ax = plt.axes()
     if xlabel is not None: ax.set_xlabel(xlabel)
     if ylabel is not None: ax.set_ylabel(ylabel)
-    if title  is not None: ax.set_title(title)
+    # if title  is not None: ax.set_title(title)
 
     return ax
 

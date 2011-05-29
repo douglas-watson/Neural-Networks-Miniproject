@@ -55,8 +55,8 @@ def skander_examples():
 
 # 1.2 - Type I or II?
 def prob1_2():
-    fig = plt.figure(figsize=[8,4.5])
-    fig.subplots_adjust(left=0.11)
+    fig = plt.figure(figsize=[5.3, 3])
+    fig.subplots_adjust(left=0.15, bottom=0.15)
     col = colours(4)
 
     for model in (HH, HHxx):
@@ -76,7 +76,7 @@ def prob1_2():
     ax = f_vs_I(data, '.', label=HHx.name, v_th=0, color=col.pop(0))
 
     ax.legend(loc="upper right")
-    figsave("1.2-neuron_type.pdf")
+    figsave("1_2-neuron_type.pdf")
 
 # 1.3 - How many synapses need to be open for a spike?
 def prob1_3():
@@ -97,7 +97,7 @@ def prob1_3_run(model, Ns):
         t, v = np.transpose(data)
         ax.plot(t, v, '-', color=col.pop(0), label=str(i))
     ax.legend()
-    figsave("1.3-%s_synapse_number.pdf" % model.name)
+    figsave("1_3-%s_synapse_number.pdf" % model.name)
 
 # 1.4 - Number of activated synapses vs EPSP in subthreshold regime
 def prob1_4():
@@ -117,16 +117,16 @@ def prob1_4():
         n, v = np.transpose(max_v)
         ax.plot(n, v, '.', label=model.name, color=col.pop(0))
     ax.legend(loc="lower right")
-    figsave("1.4-number_of_synapses.pdf")
+    figsave("1_4-number_of_synapses.pdf")
 
     ax.set_xlim(0, 6)
     ax.set_ylim(-80, -40)
-    figsave("1.4-number_of_synapses_zoom.pdf")
+    figsave("1_4-number_of_synapses_zoom.pdf")
 
 if __name__ == '__main__':
     # skander_examples()
-    # prob1_2()
-    # prob1_3()
-    # prob1_3()
-    prob1_4()
+    prob1_2()
+    #prob1_3()
+    #prob1_3()
+    #prob1_4()
     # prob1_3_run(HH, [1, 2, 3, 4, 5, 10, 40])
